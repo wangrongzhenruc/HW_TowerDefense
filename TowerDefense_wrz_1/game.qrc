@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/myicons">
+        <file>enemy_green1.png</file>
+        <file>map1.png</file>
+        <file>tower1.png</file>
+        <file>bullet1.png</file>
+    </qresource>
+    <qresource prefix="/mydata">
+        <file>enemyroad.csv</file>
+        <file>map1_position.csv</file>
+    </qresource>
+</RCC>

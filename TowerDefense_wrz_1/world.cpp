@@ -1,7 +1,19 @@
 #include "world.h"
 #include <math.h>
+#include <QVector2D>
+#include <QTimer>
+#include <QObject>
 
-World::World()
+vector<Tower0 *> World::TOWER_VECTOR;
+vector<Enemy *> World::ENEMY_VECTOR;
+vector<Bullet0 *> World::BULLET_VECTOR;
+bool World::isLose = false;
+bool World::isWin = false;
+
+World::World():
+    _waves(0)
+  , _gameWin(false)
+  , _baseHP(5)
 {
 
 }
@@ -15,7 +27,7 @@ void World::setTower(const QPoint &p){
         if (flag1 && flag2){
             (*it).setAvailable(false);
             Tower0 *tower = new Tower0((*it).getPoint());
-            _towerVector.push_back(tower);
+            TOWER_VECTOR.push_back(tower);
             break;
          }
         else{
@@ -25,7 +37,7 @@ void World::setTower(const QPoint &p){
 }
 
 
-/*bool World::areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2)
+bool World::areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2)
 {
     double xDis = point1.x()-point2.x();
     double yDis = point1.y()-point2.y();
@@ -36,32 +48,122 @@ void World::setTower(const QPoint &p){
     return false;
 }
 
+
 void World::enenyMove(Enemy &enemy){
-    if (areCirclesMeet(enemy.getPosition(), Enemy::SPEED,
-                       enemy.getNextPosition()->getPosition(), Enemy::SPEED))
-    {
-        // 敌人抵达了一个航点
-        if (enemy.getNextPosition()->getNextPoint())
+    if (!enemy._active)
+        return;
+    else{
+        if (areCirclesMeet(enemy.getPosition(), Enemy::SPEED,
+                           enemy.getNextPosition()->getPosition(), Enemy::SPEED))
         {
-            // 还有下一个航点
-            enemy.goOnNextPosition();
+            // 敌人抵达了一个航点
+            if (enemy.getNextPosition()->getNextPoint())
+            {
+                // 还有下一个航点
+                enemy.goOnNextPosition();
+            }
+            else
+            {
+                // 进入基地
+                this->baseDamaged();
+                this->eraseEnemy(&enemy);
+                return;
+            }
         }
-        else
-        {
-            // 进入基地
-            //m_game->getHpDamage();
-             vector<Enemy*>::iterator it;
-             it = _enemyVector.begin()+
-            this->_enemyVector.erase(&enemy);
-            return;
-        }
+        enemy.move();
+        return;
     }
-    int x =  this->_player->getNextX(direction);
-    int y = this->_player->getNextY(direction);
-    this->eraseObj(x,y);
-    //移动玩家
-    this->_player->move(direction, steps);
-}*/
+}
+
+void World::eraseEnemy(Enemy *enemy){
+    vector<Enemy*>::iterator it;
+    it = find(ENEMY_VECTOR.begin(), ENEMY_VECTOR.end(), enemy);
+    if (it == ENEMY_VECTOR.end()){
+        return;
+    }
+    else {
+        //(*it)->onErase();
+        delete (*it);
+        this->ENEMY_VECTOR.erase(it);
+    }
+
+    if (ENEMY_VECTOR.empty())
+        {
+            ++_waves; // 当前波数加1
+            // 继续读取下一波
+            if (!loadWave())
+            {
+                // 当没有下一波时，这里表示游戏胜利
+                // 设置游戏胜利标志为true
+                _gameWin = true;
+                // 游戏胜利转到游戏胜利场景
+                // 这里暂时以打印处理
+            }
+        }
+}
+
+void World::enemyDied(Enemy *enemy)
+{
+    if (enemy->_attackerTowers.empty()){
+        return;
+    }
+    int n = enemy->_attackerTowers.size();
+    for (int i=0;i<n;i++){
+        enemy->_attackerTowers[i]->targetDied();
+    }
+    eraseEnemy(enemy);
+}
+
+void World::enemyDamaged(Enemy *enemy, int damage)
+{
+    enemy->_currentHP -= damage;
+    // 阵亡,需要移除
+    if (enemy->_currentHP <= 0)
+    {
+        enemyDied(enemy);
+    }
+}
+
+bool World::loadWave()
+{
+    if (_waves >= 5)
+        return false;
+    EnemyRoad *startPoint = EnemyRoad::ROADPOINT_VECTOR.back(); // 这里是个逆序的，尾部才是其实节点
+    int enemyStartInterval[] = { 30, 1500, 3000, 4500, 6000 };
+    for (int i = 0; i < 5; ++i)
+    {
+        Enemy *enemy = new Enemy(startPoint);
+        World::ENEMY_VECTOR.push_back(enemy);
+        QTimer::singleShot(enemyStartInterval[i], enemy, SLOT(doActivate()));
+    }
+    return true;
+}
 
 
+void World::eraseBullet(Bullet0 *bullet)
+{
+    vector<Bullet0 *>::iterator it;
+    it = find(BULLET_VECTOR.begin(), BULLET_VECTOR.end(), bullet);
+    if (it == BULLET_VECTOR.end()){
+        return;
+    }
+    else {
+        //(*it)->onErase();
+        delete (*it);
+        this->BULLET_VECTOR.erase(it);
+    }
+}
+
+void World::baseDamaged(int damage){
+    this->_baseHP -= damage;
+    if(this->_baseHP <= 0){
+        gameOver();
+    }
+}
+
+void World::gameOver(){
+    if(!isLose){
+        isLose = true;
+    }
+}
 
