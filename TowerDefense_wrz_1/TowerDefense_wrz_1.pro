@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,25 +18,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     bullet0.cpp \
+    button.cpp \
     enemy.cpp \
     enemyroad.cpp \
     main.cpp \
     mainwindow.cpp \
     position.cpp \
+    startwindow.cpp \
     tower0.cpp \
+    tower2.cpp \
     world.cpp
 
 HEADERS += \
     bullet0.h \
+    button.h \
     enemy.h \
     enemyroad.h \
     mainwindow.h \
     position.h \
+    startwindow.h \
     tower0.h \
+    tower2.h \
     world.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    startwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -22,7 +22,7 @@ public:
     void setAvailable(bool isAvailable=false){this->_isAvailable=isAvailable;}
     bool isAvailable() {return this->_isAvailable;}
 
-    bool inArea(const QPoint &p) const;
+    bool inArea(const QPoint &p, int xrange = MAP_BLOCK_SIZE_X, int yrange = MAP_BLOCK_SIZE_Y) const;
     bool operator == (const Position &p) const;
 
 private:

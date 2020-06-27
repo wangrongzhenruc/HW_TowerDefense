@@ -18,6 +18,8 @@ public:
     //void show(QPainter *painter) const;
 
 
+
+
 private:
     const QPoint		_position;
     EnemyRoad *			_nextPoint;

@@ -4,9 +4,26 @@
         <file>map1.png</file>
         <file>tower1.png</file>
         <file>bullet1.png</file>
+        <file>tower2.png</file>
+        <file>bullet2.png</file>
+        <file>enemyFlash.png</file>
+        <file>enemyHP.png</file>
+        <file>quitButton.png</file>
+        <file>startButton.png</file>
+        <file>backGround.jpg</file>
+        <file>startGame.png</file>
+        <file>quitGame.png</file>
+        <file>tower1forplayer.png</file>
+        <file>tower2forplayer.png</file>
     </qresource>
     <qresource prefix="/mydata">
         <file>enemyroad.csv</file>
         <file>map1_position.csv</file>
+        <file>startGame.png</file>
+    </qresource>
+    <qresource prefix="/mymusic">
+        <file>BGM.mp3</file>
+        <file>enemyDied.mp3</file>
+        <file>setTower.mp3</file>
     </qresource>
 </RCC>

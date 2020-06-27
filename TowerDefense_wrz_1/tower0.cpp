@@ -4,7 +4,7 @@
 #include "bullet0.h"
 #include <QtMath>
 
-bool areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2)
+bool Tower0::areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2)
 {
     double xDis = point1.x()-point2.x();
     double yDis = point1.y()-point2.y();
@@ -118,4 +118,9 @@ void Tower0::enemyOutOfRange(){
     this->_rotation = 0.0;
 }
 
-
+void Tower0::onSet(){
+    QMediaPlayer * player = new QMediaPlayer;
+    player->setMedia(QUrl("qrc:/mymusic/setTower.mp3"));
+    player->setVolume(30);
+    player->play();
+}

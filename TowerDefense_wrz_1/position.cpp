@@ -56,10 +56,10 @@ Position Position::findPosition(int x, int y){
     }
 }
 
-bool Position::inArea(const QPoint &p) const
+bool Position::inArea(const QPoint &p, int xrange, int yrange) const
 {
-    bool xIn = p.x() >= this->_x && p.x() <= this->_x+ Position::MAP_BLOCK_SIZE_X;
-    bool yIn = p.y() >= this->_y && p.y() <= this->_y+ Position::MAP_BLOCK_SIZE_Y;
+    bool xIn = p.x() >= this->_x && p.x() <= this->_x+ xrange;
+    bool yIn = p.y() >= this->_y && p.y() <= this->_y+ yrange;
     return xIn && yIn;
 }
 

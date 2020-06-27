@@ -9,7 +9,7 @@
 class World;
 class Enemy;
 
-class Tower0 : QObject
+class Tower0 : public QObject
 {
     Q_OBJECT
 public:
@@ -28,6 +28,8 @@ public:
     void setEnemy(Enemy *e);
     void targetDied();
     void enemyOutOfRange();
+    void onSet();
+    bool areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2);
 
 private slots:
     void shootWeapon();
