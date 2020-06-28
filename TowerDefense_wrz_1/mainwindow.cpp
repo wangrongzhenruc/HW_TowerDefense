@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "button.h"
 #include "tower0.h"
 
 
@@ -10,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , towerType(0)
 {
     ui->setupUi(this);
+    this->setFixedSize(960, 767);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMap()));
@@ -20,11 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
     player->setVolume(10);
     player->play();
 
-    Button * startButton = new Button(QPixmap(":/myicons/startGame.png"));
+    startButton = new Button(QPixmap(":/myicons/startGame.png"));
     startButton->setParent(this);
     startButton->move(10, 640);
     connect(startButton, &Button::clicked, this, &MainWindow::gameStart);
-    Button * quitButton = new Button(QPixmap(":/myicons/quitGame.png"));
+    quitButton = new Button(QPixmap(":/myicons/quitGame.png"));
     quitButton->setParent(this);
     quitButton->move(10, 690);
     connect(quitButton, &Button::clicked, this, &QApplication::quit);
@@ -45,10 +45,15 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *){
     if (World::isWin || World::isLose)
     {
-        QString text = World::isLose ? "YOU LOSE!!!" : "YOU WIN!!!";
         QPainter painter(this);
-        painter.setPen(QPen(Qt::red));
-        painter.drawText(rect(), Qt::AlignCenter, text);
+        if(World::isLose){
+            QPixmap pixmap(":/myicons/lose.jpg");
+            painter.drawPixmap(0, 0, this->width(), this->height(), pixmap);
+        }
+        else{
+            QPixmap pixmap(":/myicons/win.jpg");
+            painter.drawPixmap(0, 0, this->width(), this->height(), pixmap);
+        }
         return;
     }
 
@@ -85,11 +90,12 @@ void MainWindow::paintEvent(QPaintEvent *){
     frontPainter->drawText(150, 50, QString("基地血条 : %1").arg(_game.BaseHP));
     frontPainter->drawText(450, 50, QString("财力 : %1").arg(_game.PlayerGold));
 
-    QPixmap tower1(":/myicons/tower1forplayer.png");
-    QPixmap tower2(":/myicons/tower2forplayer.png");
-    frontPainter->drawPixmap(5,150,150,150,tower1);
-    frontPainter->drawPixmap(5,350,150,150,tower2);
-
+    frontPainter->drawPixmap(5,150,150,150,QPixmap(":/myicons/tower1forplayer.png"));
+    frontPainter->drawPixmap(5,350,150,150,QPixmap(":/myicons/tower2forplayer.png"));
+    frontPainter->drawPixmap(10,550,80,80,QPixmap(":/myicons/eraser.png"));
+    frontPainter->drawPixmap(300,640,80,80,QPixmap(":/myicons/enemy_green1forplayer.png"));
+    frontPainter->drawPixmap(450,640,80,80,QPixmap(":/myicons/enemyHPforplayer.png"));
+    frontPainter->drawPixmap(600,640,80,80,QPixmap(":/myicons/enemyFlashforplayer.png"));
     frontPainter->end();
     delete frontPainter;
 
@@ -101,17 +107,27 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 {
     QPoint pressPos = e->pos();
     if(_game.chooseTowerType(pressPos)==1){
-        _game.setTower(pressPos, 1);
         towerType = 1;
     }
     else if(_game.chooseTowerType(pressPos)==2){
-        _game.setTower(pressPos, 2);
         towerType = 2;
     }
-    else if(towerType!=0){
+    else if(_game.chooseTowerType(pressPos)==3){
+        towerType += 100;
+    }
+    else if(towerType==1||towerType==2){
         _game.setTower(pressPos, towerType);
     }
+    else if(towerType==102||towerType==101){
+        _game.eraseTower(pressPos);
+    }
     else{}
+    this->update();
+}
+
+void MainWindow::mouseDoubleClickEvent(QMouseEvent *e){
+    QPoint pressPos = e->pos();
+    _game.updateTower(pressPos);
     this->update();
 }
 
@@ -135,5 +151,7 @@ void MainWindow::updateMap(){
 void MainWindow::gameStart()
 {
     this->_game.loadWave();
+    delete(startButton);
+    startButton = NULL;
 }
 

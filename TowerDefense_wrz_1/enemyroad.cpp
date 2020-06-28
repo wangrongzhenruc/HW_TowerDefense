@@ -5,13 +5,39 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
+#include <QString>
+#include <QStringList>
+#include <QFile>
+#include <QTextStream>
 vector<EnemyRoad *> EnemyRoad::ROADPOINT_VECTOR=[] {
     vector<EnemyRoad *> v;
     EnemyRoad *EnemyRoad1 = new EnemyRoad(QPoint(865, 255));
     ROADPOINT_VECTOR.push_back(EnemyRoad1);
     EnemyRoad1->_nextPoint=NULL;
+    //读取文件方案1
+    QFile file(":/myicons/enemyroad.txt");
+    QTextStream in(&file);
+    QString line;
+    QStringList list;
 
-    char fileName[100]="/Users/shaner/Qt_files/TowerDefense_wrz_1//enemyroad.csv";
+    if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        while (!in.atEnd()) {
+            line=in.readLine();
+            list=line.split(",");
+
+            EnemyRoad *enemyroadpoint = new EnemyRoad(QPoint(list.at(0).toInt()
+                                                     , list.at(1).toInt()));
+            enemyroadpoint->setNextPoint(v.back());
+            v.push_back(enemyroadpoint);
+        }
+    }
+    else // 没有该文件
+      {
+          cout <<"no such file" << endl;
+      }
+    //读取文件方案2
+    /*
+    char fileName[100]="/Users/shaner/Qt_files/TowerDefense_wrz_1/enemyroad.csv";
     ifstream in(fileName);//打开文件
     string line;
     if(in) // 有该文件
@@ -30,7 +56,7 @@ vector<EnemyRoad *> EnemyRoad::ROADPOINT_VECTOR=[] {
   else // 没有该文件
     {
         cout <<"no such file" << endl;
-    }
+    }*/
 
     return v;
 }();
@@ -43,17 +69,5 @@ void EnemyRoad::setNextPoint(EnemyRoad *nextPoint)
 {
     _nextPoint = nextPoint;
 }
-
-/*void EnemyRoad::show(QPainter *painter) const
-{
-    painter->save();
-    painter->setPen(Qt::green);
-    painter->drawEllipse(_position, 6, 6);
-    painter->drawEllipse(_position, 2, 2);
-
-    if (_nextPoint)
-        painter->drawLine(_position, _nextPoint->_position);
-    painter->restore();
-}*/
 
 

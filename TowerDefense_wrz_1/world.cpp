@@ -30,17 +30,24 @@ bool World::canBuyTower(int type) const
     else if (type==2 && PlayerGold >= Tower_2_Cost) {
         return true;
     }
+    else if (type==3 && PlayerGold >= 40) {
+        return true;
+    }
     return false;
 }
 
 int World::chooseTowerType(const QPoint &p){
     Position tower1_p(5,150,false);
     Position tower2_p(5,350,false);
-    if(tower1_p.inArea(p, 100, 100)){
+    Position eraser_p(10,550,false);
+    if(tower1_p.inArea(p, 150, 150)){
         return 1;
     }
-    if(tower2_p.inArea(p, 100, 100)){
+    if(tower2_p.inArea(p, 150, 150)){
         return 2;
+    }
+    if(eraser_p.inArea(p, 80, 80)){
+        return 3;
     }
     else
         return 0;
@@ -55,6 +62,8 @@ void World::setTower(const QPoint &p, int type){
             if(type == 1){
                 this->PlayerGold -= Tower_1_Cost;
                 (*it).setAvailable(false);
+                (*it).setHasTowr1(true);
+                (*it).setHasTower(true);
                 Tower0 *tower = new Tower0((*it).getPoint());
                 TOWER_0_VECTOR.push_back(tower);
                 tower->onSet();
@@ -63,6 +72,7 @@ void World::setTower(const QPoint &p, int type){
             else{
                 this->PlayerGold -= Tower_2_Cost;
                 (*it).setAvailable(false);
+                (*it).setHasTower(true);
                 Tower2 *tower = new Tower2((*it).getPoint());
                 TOWER_2_VECTOR.push_back(tower);
                 tower->onSet();
@@ -75,8 +85,83 @@ void World::setTower(const QPoint &p, int type){
     }
 }
 
+void World::eraseTower(const QPoint &p){
+    vector<Position>::iterator it; //迭代器
+    it = Position::AVAILABLE_POSITION.begin();
+    while(it!=Position::AVAILABLE_POSITION.end()){
+        bool flag1 = (*it).inArea(p);
+        bool flag2 = (*it).isHasTower();
+        bool notFound = true;
+        if (flag1 && flag2){
+            (*it).setHasTower(false);
+            (*it).setAvailable(true);
+            if(true){
+                vector<Tower0 *>::iterator iter;
+                iter = TOWER_0_VECTOR.begin();
+                while(iter!=TOWER_0_VECTOR.end()){
+                    if((*iter)->getPosition() == (*it)){
+                        delete (*iter);
+                        TOWER_0_VECTOR.erase(iter);
+                        notFound = false;
+                        break;
+                    }
+                    else{
+                        iter++;
+                    }
+                }
+            }
+            if(notFound){
+                vector<Tower2 *>::iterator iter;
+                iter = TOWER_2_VECTOR.begin();
+                while(iter!=TOWER_2_VECTOR.end()){
+                    if((*iter)->getPosition() == (*it)){
+                        delete (*iter);
+                        (*iter)->updateDamage();
+                        TOWER_2_VECTOR.erase(iter);
+                        break;
+                    }
+                    else{
+                        iter++;
+                    }
+                }
+            }
+         }
+        else{
+            it++;
+        }
+    }
+}
 
-bool World::areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2)
+void World::updateTower(const QPoint &p){
+    vector<Position>::iterator it; //迭代器
+    it = Position::AVAILABLE_POSITION.begin();
+    while(it!=Position::AVAILABLE_POSITION.end()){
+        bool flag1 = (*it).inArea(p);
+        bool flag2 = (*it).isHasTowr1();
+        if (flag1 && flag2 && this->canBuyTower(3)){
+            this->PlayerGold -= 40;
+            (*it).setHasTowr1(false);
+            vector<Tower0 *>::iterator iter;
+            iter = TOWER_0_VECTOR.begin();
+            while(iter!=TOWER_0_VECTOR.end()){
+                if((*iter)->getPosition() == (*it)){
+                    (*iter)->updatePixmap();
+                    (*iter)->updateDamage();
+                    break;
+                }
+                else{
+                    iter++;
+                }
+            }
+         }
+        else{
+            it++;
+        }
+    }
+}
+
+
+bool World::areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2) const
 {
     double xDis = point1.x()-point2.x();
     double yDis = point1.y()-point2.y();
@@ -115,15 +200,16 @@ void World::enenyMove(Enemy &enemy){
 }
 
 void World::eraseEnemy(Enemy *enemy){
-    vector<Enemy*>::iterator it;
+    vector<Enemy*>::iterator it; // 创建迭代器
     it = find(ENEMY_VECTOR.begin(), ENEMY_VECTOR.end(), enemy);
+        // 使用find函数和运算符重载搜寻对应对象
     if (it == ENEMY_VECTOR.end()){
         return;
     }
     else {
         enemy->onErase();
-        delete (*it);
-        this->ENEMY_VECTOR.erase(it);
+        delete (*it); // 释放内存
+        this->ENEMY_VECTOR.erase(it); // 在容器中删除该位置
     }
 
     if (ENEMY_VECTOR.empty())
@@ -139,8 +225,9 @@ void World::eraseEnemy(Enemy *enemy){
 
 void World::enemyDied(Enemy *enemy)
 {
+    // 若敌人死亡，需要告知他的所有攻击者，还敌人已不存在
     if (enemy->_attackerTowers0.empty()&&enemy->_attackerTowers2.empty()){
-    }
+    }// 若敌人没有攻击者，则不任何事情
     else{
         int n1 = enemy->_attackerTowers0.size();
         for (int i=0;i<n1;i++){
@@ -151,6 +238,7 @@ void World::enemyDied(Enemy *enemy)
             enemy->_attackerTowers2[i]->targetDied();
         }
     }
+    // 删除敌人
     eraseEnemy(enemy);
 }
 

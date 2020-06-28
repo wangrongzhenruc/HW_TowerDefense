@@ -4,12 +4,38 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
+#include <QString>
+#include <QStringList>
+#include <QFile>
+#include <QTextStream>
 using namespace std;
 
 const int Position::MAP_BLOCK_SIZE_X=74;
 const int Position::MAP_BLOCK_SIZE_Y=78;
 vector<Position> Position::AVAILABLE_POSITION = [] {
     vector<Position> v;
+    //读取文件方案1
+    QFile file(":/myicons/enemyroad.txt");
+    QTextStream in(&file);
+    QString line;
+    QStringList list;
+
+    if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        while (!in.atEnd()) {
+            line=in.readLine();
+            list=line.split(",");
+
+            int x=list.at(0).toInt();
+            int y=list.at(1).toInt();
+            v.push_back(Position(x, y,true));
+        }
+    }
+    else // 没有该文件
+      {
+          cout <<"no such file" << endl;
+      }
+    //读取文件方案2
+    /*
     char fileName[100]="/Users/shaner/Qt_files/TowerDefense_wrz_1/map1_position.csv";
     ifstream in(fileName);//打开文件
     string line;
@@ -28,14 +54,14 @@ vector<Position> Position::AVAILABLE_POSITION = [] {
         else // 没有该文件
         {
             cout <<"no such file" << endl;
-        }
+        }*/
     return v;
 }();
 
-//static Position findPosition(int x, int y);
 
 Position::Position(int x, int y, bool available):
-    _x(x),_y(y),_isAvailable(available){}
+    _x(x),_y(y),_isAvailable(available)
+  ,_hasTower1(false),_hasTower(false){}
 
 Position::Position(const Position &p):
     _x(p._x), _y(p._y), _isAvailable(p._isAvailable){}

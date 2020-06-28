@@ -1,6 +1,5 @@
 #include "enemy.h"
 #include "mainwindow.h"
-//#include "audioplayer.h"
 #include <QPainter>
 #include <QColor>
 #include <QDebug>
@@ -21,7 +20,6 @@ Enemy::Enemy(EnemyRoad *startWayPoint, int type)
     , _type(type)
     , _currentHP(MAX_HP)
     , _speed(SPEED)
-    , _rotationSprite(0.0)
     , _position(startWayPoint->getPosition())
     , _nextStep(startWayPoint->getNextPoint())
 {
@@ -101,7 +99,6 @@ void Enemy::move(){
         QVector2D vectorToTarget(targetPoint-_position);
         vectorToTarget.normalize();
         _position += vectorToTarget.toPoint()*this->_speed;
-        _rotationSprite = qRadiansToDegrees(qAtan2(vectorToTarget.y(), vectorToTarget.x())) + 180;
 }
 
 void Enemy::outOfRange(Tower0 *attacker){
@@ -132,25 +129,3 @@ void Enemy::onErase(){
     player->setVolume(30);
     player->play();
 }
-
-
-
-/*
-
-void Enemy::setSpeed()
-{
-    _speed = SPEED * 0.7;
-}
-
-void Enemy::upSpeed()
-{
-    _speed = SPEED;
-}
-
-void Enemy::upLevel()
-{
-    _level += 1;
-}
-*/
-
-

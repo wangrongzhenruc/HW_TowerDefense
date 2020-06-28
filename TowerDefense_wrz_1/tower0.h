@@ -21,7 +21,11 @@ public:
             return (this->_position == t._position);
         }
 
+    Position getPosition() const {return Position(_position.x(), _position.y());}
+
     void show(QPainter *painter) const;
+    void updatePixmap();
+    void updateDamage();
 
     void checkEnemyInRange();
     void startAttack();
@@ -42,8 +46,6 @@ protected:
     QTimer * _attackTimer;//攻击计时器
     Enemy * _currentEnemy;//攻击目标
     World * _game;
-
-    qreal _rotation;//旋转角度
 
     QPoint _position;//左上角坐标点
     QPoint _centrePosition;

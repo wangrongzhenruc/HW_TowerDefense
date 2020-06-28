@@ -11,8 +11,6 @@ class Button : public QPushButton
 public:
     Button(QPixmap pixmap);
 
-signals:
-
 };
 
 #endif // BUTTON_H

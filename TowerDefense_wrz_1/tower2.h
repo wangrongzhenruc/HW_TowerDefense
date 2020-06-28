@@ -18,8 +18,8 @@ public:
 
 
 protected:
-    //攻击属性：
     QPixmap _pixmap;//图标
+    World * _game;
 };
 
 

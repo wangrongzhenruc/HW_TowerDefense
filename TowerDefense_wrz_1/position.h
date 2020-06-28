@@ -20,6 +20,10 @@ public:
     void setX(int x) {this->_x=x;}
     void setY(int y) {this->_y=y;}
     void setAvailable(bool isAvailable=false){this->_isAvailable=isAvailable;}
+    void setHasTowr1(bool hasTower1=true){this->_hasTower1=hasTower1;}
+    bool isHasTowr1(){return this->_hasTower1;}
+    void setHasTower(bool hasTower=true){this->_hasTower=hasTower;}
+    bool isHasTower(){return this->_hasTower;}
     bool isAvailable() {return this->_isAvailable;}
 
     bool inArea(const QPoint &p, int xrange = MAP_BLOCK_SIZE_X, int yrange = MAP_BLOCK_SIZE_Y) const;
@@ -28,6 +32,8 @@ public:
 private:
     int _x, _y;
     bool _isAvailable;
+    bool _hasTower1;
+    bool _hasTower;
 };
 
 #endif // POSITION_H

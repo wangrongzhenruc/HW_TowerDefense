@@ -9,9 +9,10 @@
 #include <QPushButton>
 #include <QPainter>
 #include "position.h"
-#include "tower1.h"
+#include "tower0.h"
 #include "enemyroad.h"
 #include "world.h"
+#include "button.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,8 +32,9 @@ public:
 
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
+    void mouseDoubleClickEvent(QMouseEvent *e);
 
-protected slots:
+private slots:
     void updateMap();
     void gameStart();
     void receivelogin();//与login中发射的信号关联的槽函数
@@ -43,5 +45,7 @@ private:
     World _game;
     QTimer *timer;
     int towerType;
+    Button * startButton;
+    Button * quitButton;
 };
 #endif // MAINWINDOW_H

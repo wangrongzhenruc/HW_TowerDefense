@@ -32,9 +32,11 @@ public:
 
     bool canBuyTower(int type) const;
     void setTower(const QPoint &p, int type);
+    void eraseTower(const QPoint &p);
+    void updateTower(const QPoint &p);
     int chooseTowerType(const QPoint &p);
 
-    bool areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2);
+    bool areCirclesMeet(QPoint point1, int radius1, QPoint point2, int radius2) const;
     void enenyMove(Enemy &enemy);
     void enemyDied(Enemy *enemy);
     void enemyDamaged(Enemy *enemy, int damage);

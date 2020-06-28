@@ -22,15 +22,15 @@ Tower0::Tower0(QPoint position):
     , _attackDamage(10)
     , _attackInterval(100)
     , _currentEnemy(NULL)
-    , _rotation(0.0)
     , _position(position)
     , _centrePosition(position+QPoint(TOWER_SIZE/2, TOWER_SIZE/2))
     , _pixmap(":/myicons/tower1.png")
 {
-    _game=new World;
+    _game=new World;// 创建World对象
 
-    _attackTimer = new QTimer(this);
+    _attackTimer = new QTimer(this);// 创建计时器
     connect(_attackTimer, SIGNAL(timeout()), this, SLOT(shootWeapon()));
+    // 设置了槽与信号函数的连接，但还未启动
 }
 
 Tower0::~Tower0(){
@@ -50,16 +50,19 @@ void Tower0::show(QPainter *painter) const
     painter->restore();
 }
 
+void Tower0::updatePixmap(){
+    this->_pixmap.load(":/myicons/tower1.2.png");
+}
+
+void Tower0::updateDamage(){
+    this->_attackDamage = 1.5*_attackDamage;
+    this->_attackRange = 1.2*_attackRange;
+}
+
 void Tower0::checkEnemyInRange()
 {
     if (_currentEnemy)
     {
-        // 这种情况下,需要旋转炮台对准敌人
-        // 向量标准化
-        QVector2D normalized(_currentEnemy->getPosition() - this->_centrePosition);
-        normalized.normalize();
-        _rotation = qRadiansToDegrees(qAtan2(normalized.y(), normalized.x())) - 90;
-
         // 如果敌人脱离攻击范围
         if (!areCirclesMeet(_centrePosition, _attackRange
                             , _currentEnemy->getPosition(), 1)){
@@ -84,13 +87,13 @@ void Tower0::checkEnemyInRange()
 
 
 void Tower0::startAttack(){
-    _attackTimer->start(_attackInterval);
+    _attackTimer->start(_attackInterval);// 计时器开始
 }
 
 void Tower0::setEnemy(Enemy *enemy){
-    _currentEnemy=enemy;
-    startAttack();
-    _currentEnemy->addAttacker(this);
+    _currentEnemy=enemy;// 设置目标敌人
+    startAttack();// 开始进攻
+    _currentEnemy->addAttacker(this);// 为敌人添加攻击者
 }
 
 void Tower0::shootWeapon()
@@ -106,7 +109,6 @@ void Tower0::targetDied(){
         _currentEnemy=NULL;
     }
     this->_attackTimer->stop();
-    this->_rotation = 0.0;
 }
 
 void Tower0::enemyOutOfRange(){
@@ -115,7 +117,6 @@ void Tower0::enemyOutOfRange(){
         _currentEnemy=NULL;
     }
     this->_attackTimer->stop();
-    this->_rotation = 0.0;
 }
 
 void Tower0::onSet(){

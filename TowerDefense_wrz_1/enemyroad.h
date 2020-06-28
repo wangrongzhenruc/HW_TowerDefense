@@ -15,9 +15,6 @@ public:
     void setNextPoint(EnemyRoad *nextPoint);
     EnemyRoad* getNextPoint() const{ return _nextPoint; }
     const QPoint getPosition() const{ return _position; }
-    //void show(QPainter *painter) const;
-
-
 
 
 private:

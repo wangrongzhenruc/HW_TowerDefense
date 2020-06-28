@@ -24,7 +24,7 @@ public:
     Enemy(EnemyRoad *startPoint, int type);
     ~Enemy();
 
-    bool operator == (const Enemy &e) {
+    bool operator == (const Enemy &e) {//重载 == 运算符
             return (this->_position == e._position);
         }
 
@@ -32,7 +32,7 @@ public:
 
     QPoint getPosition() const{return this->_position;}
     EnemyRoad * getNextPosition() const{return this->_nextStep;}
-    int getType(){ return this->_type; }
+    int getType() const { return this->_type; }
 
     void show(QPainter *painter) const;
     void setShowBlock(bool isShow);
@@ -44,14 +44,9 @@ public:
     void addAttacker(Tower2 *attacker){ _attackerTowers2.push_back(attacker); }
     void outOfRange(Tower0 *attacker);
     void outOfRange(Tower2 *attacker);
-    //void outOfRange(Tower0 *attacker){ attacker=NULL; }
     void setSpeed(double times) { _speed = times*_speed; }
 
     void onErase();
-
-    //void setSpeed();
-    //void upSpeed();
-    //void upLevel();
 
 public slots:
     void doActivate() { this->_active = true; }
@@ -62,7 +57,6 @@ protected:
     int             _type;
     int				_currentHP;
     double			_speed;
-    double			_rotationSprite;
 
     QPoint			_position;
     EnemyRoad *		_nextStep;

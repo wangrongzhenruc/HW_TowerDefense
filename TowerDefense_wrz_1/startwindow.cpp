@@ -10,6 +10,8 @@ StartWindow::StartWindow(QWidget *parent) :
     _quitButton(":/myicons/quitButton.png")
 {
     ui->setupUi(this);
+    this->setFixedSize(960, 767);
+
     MainWindow * gameWindow = new MainWindow;
     Button * startButton = new Button(this->_startButton);
     startButton->setParent(this);

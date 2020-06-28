@@ -15,6 +15,14 @@
         <file>quitGame.png</file>
         <file>tower1forplayer.png</file>
         <file>tower2forplayer.png</file>
+        <file>tower1.2.png</file>
+        <file>win.jpg</file>
+        <file>lose.jpg</file>
+        <file>enemy_green1forplayer.png</file>
+        <file>enemyFlashforplayer.png</file>
+        <file>enemyHPforplayer.png</file>
+        <file>eraser.png</file>
+        <file>enemyroad.txt</file>
     </qresource>
     <qresource prefix="/mydata">
         <file>enemyroad.csv</file>
